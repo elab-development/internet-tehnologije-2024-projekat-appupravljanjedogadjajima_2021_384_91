@@ -15,17 +15,18 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(Request $request)
 {
-    $request->validate([
+    $credentials = $request->validate([
         'email' => 'required|email',
         'password' => 'required',
     ]);
 
-    if (!\Illuminate\Support\Facades\Auth::attempt($request->only('email', 'password'))) {
+    if (!Auth::attempt($credentials)) {
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
 
-    $user = $request->user();
+    $user = Auth::user();
 
+    // Kreiranje API tokena
     $token = $user->createToken('api-token')->plainTextToken;
 
     return response()->json([
@@ -36,14 +37,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function destroy(Request $request)
     {
-        Auth::guard('web')->logout();
+        $request->user()->currentAccessToken()->delete();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
+
 }
