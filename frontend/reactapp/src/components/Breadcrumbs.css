@@ -1,0 +1,48 @@
+.breadcrumbs {
+  margin: 15px 0 20px 0;
+  font-size: 15px;
+  font-family: 'Segoe UI', sans-serif;
+  padding-left: 40px;  
+}
+
+
+.breadcrumbs ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.breadcrumbs li {
+  display: flex;
+  align-items: center;
+  color: #4b5563;
+}
+
+.breadcrumbs a {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbs li span {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.breadcrumbs li::after {
+  content: "›";
+  color: #9ca3af;
+  margin: 0 6px;
+}
+
+.breadcrumbs li:last-child::after {
+  content: "";
+}
