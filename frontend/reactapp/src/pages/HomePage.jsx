@@ -3,36 +3,31 @@ import { useState, useEffect } from "react";
 import "./HomePage.css";
 
 export default function HomePage() {
-  const exampleEvents = [
-    {
-      id: 1,
-      title: "Prezentacija projekta",
-      desc: "Studenti predstavljaju projekte iz predmeta Softversko inženjerstvo.",
-      date: "2025-10-23",
-      location: "FON - učionica 21",
-    },
-    {
-      id: 2,
-      title: "Ispit iz ekonomije",
-      desc: "Redovan rok, amfiteatar 1, početak u 9h.",
-      date: "2025-10-21",
-      location: "FON - amfiteatar 1",
-    },
-    {
-      id: 3,
-      title: "FON konferencija",
-      desc: "Događaj na kome predavači iz industrije dele iskustva i savete studentima.",
-      date: "2025-11-05",
-      location: "FON - konferencijska sala",
-    },
-  ];
-
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [universities, setUniversities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  //  useEffect - prikazuje poruku kad se stranica učita - prikazuje poruku u console
+  // useEffect – poruka pri učitavanju
   useEffect(() => {
-    console.log(" Početna stranica učitana - dobrodošli na Eventify!");
-  }, []); // [] znači da se efekat pokreće samo jednom, pri učitavanju
+    console.log("✅ Početna stranica učitana - dobrodošli na Eventify!");
+
+    // povlačenje podataka sa API-ja
+    fetch("https://raw.githubusercontent.com/Hipo/university-domains-list/refs/heads/master/world_universities_and_domains.json")
+      .then((res) => {
+        if (!res.ok) throw new Error("Greška pri učitavanju podataka!");
+        return res.json();
+      })
+      .then((data) => {
+        setUniversities(data.slice(7536, 7544)); // uzimamo samo 8
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("❌ Greška:", err);
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="home-page">
@@ -59,23 +54,39 @@ export default function HomePage() {
       </section>
 
       <section className="examples">
-        <h2>Predstojeći događaji</h2>
+        <h2>Predstojeći događaji (API podaci)</h2>
+
+        {loading && <p>⏳ Učitavanje događaja...</p>}
+        {error && <p style={{ color: "red" }}>❌ {error}</p>}
+
         <div className="event-cards">
-          {exampleEvents.map((e) => (
+          {universities.map((uni, index) => (
             <div
-              key={e.id}
+              key={index}
               className="event-card clickable"
-              onClick={() => setSelectedEvent(e)} // klik otvara modal
+              onClick={() => setSelectedEvent(uni)}
             >
-              <h3>{e.title}</h3>
-              <p>{e.desc}</p>
-              <small>📅 {e.date}</small>
+              <h3>{uni.name}</h3>
+              <p>Država: {uni.country}</p>
+              {uni.web_pages && (
+                <small>
+                  🌐{" "}
+                  <a
+                    href={uni.web_pages[0]}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {uni.web_pages[0]}
+                  </a>
+                </small>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      {/*  Modal za detalje događaja */}
+      {/* Modal sa detaljima */}
       {selectedEvent && (
         <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
           <div
@@ -88,10 +99,20 @@ export default function HomePage() {
             >
               ×
             </button>
-            <h3>{selectedEvent.title}</h3>
-            <p><strong>Opis:</strong> {selectedEvent.desc}</p>
-            <p><strong>Datum:</strong> {selectedEvent.date}</p>
-            <p><strong>Lokacija:</strong> {selectedEvent.location}</p>
+            <h3>{selectedEvent.name}</h3>
+            <p><strong>Država:</strong> {selectedEvent.country}</p>
+            {selectedEvent.web_pages && (
+              <p>
+                <strong>Web sajt:</strong>{" "}
+                <a
+                  href={selectedEvent.web_pages[0]}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {selectedEvent.web_pages[0]}
+                </a>
+              </p>
+            )}
           </div>
         </div>
       )}
