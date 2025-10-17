@@ -1,5 +1,6 @@
 import NavBar from "./components/NavBar";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -7,8 +8,18 @@ function App() {
       <div>
         <NavBar />
         <div style={{ padding: "24px" }}>
-          <h1>Dobrodošao na Eventify platformu</h1>
-          <p>Ovde će kasnije biti prikaz kalendara i događaja.</p>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <h1>Dobrodošao na Eventify platformu</h1>
+                  <p>Ovde će kasnije biti prikaz kalendara i događaja.</p>
+                </>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+          </Routes>
         </div>
       </div>
     </BrowserRouter>
