@@ -1,33 +1,19 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./HomePage.css";
+import useFetch from "../hooks/useFetch";
 
 export default function HomePage() {
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [universities, setUniversities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { data: universities, loading, error, refetch } = useFetch(
+    "https://raw.githubusercontent.com/hipo/university-domains-list/refs/heads/master/world_universities_and_domains.json"
+  );
 
-  // useEffect – poruka pri učitavanju
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
   useEffect(() => {
     console.log("✅ Početna stranica učitana - dobrodošli na Eventify!");
-
-    // povlačenje podataka sa API-ja
-    fetch("https://raw.githubusercontent.com/Hipo/university-domains-list/refs/heads/master/world_universities_and_domains.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Greška pri učitavanju podataka!");
-        return res.json();
-      })
-      .then((data) => {
-        setUniversities(data.slice(7536, 7544)); // uzimamo samo 8
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ Greška:", err);
-        setError(err.message);
-        setLoading(false);
-      });
   }, []);
+
 
   return (
     <div className="home-page">
@@ -56,34 +42,44 @@ export default function HomePage() {
       <section className="examples">
         <h2>Predstojeći događaji (API podaci)</h2>
 
+      <button onClick={refetch} className="refresh-btn">
+            🔄 Osveži podatke
+      </button>
+
         {loading && <p>⏳ Učitavanje događaja...</p>}
         {error && <p style={{ color: "red" }}>❌ {error}</p>}
 
         <div className="event-cards">
-          {universities.map((uni, index) => (
-            <div
-              key={index}
-              className="event-card clickable"
-              onClick={() => setSelectedEvent(uni)}
-            >
-              <h3>{uni.name}</h3>
-              <p>Država: {uni.country}</p>
-              {uni.web_pages && (
-                <small>
-                  🌐{" "}
-                  <a
-                    href={uni.web_pages[0]}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {uni.web_pages[0]}
-                  </a>
-                </small>
-              )}
-            </div>
-          ))}
-        </div>
+  {Array.isArray(universities) && universities.length > 0 ? (
+    universities.slice(7536, 7544).map((uni, index) => ( //uzimamo samo 8
+    <div
+      key={index}
+      className="event-card clickable"
+      onClick={() => setSelectedEvent(uni)}
+    >
+      <h3>{uni.name}</h3>
+      <p>Država: {uni.country}</p>
+      {uni.web_pages && (
+        <small>
+          🌐{" "}
+          <a
+            href={uni.web_pages[0]}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {uni.web_pages[0]}
+          </a>
+        </small>
+      )}
+    </div>
+  ))
+) : !loading && !error ? (
+  <p>Nema dostupnih događaja za prikaz.</p>
+) : null}
+
+</div>
+
       </section>
 
       {/* Modal sa detaljima */}
