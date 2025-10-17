@@ -168,3 +168,165 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* ======= FILTERI ======= */
+.filter-bar {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Red 1: kategorija + pretraga */
+.filter-row-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 30px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Red 2: od datuma / do datuma */
+.filter-row-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 30px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.filter-row-top label,
+.filter-row-bottom label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  margin-right: 6px;
+}
+
+.filter-row-top select,
+.filter-row-top input[type="text"],
+.filter-row-bottom input[type="date"] {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 180px;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+}
+
+.filter-row-top input:focus,
+.filter-row-top select:focus,
+.filter-row-bottom input:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.filter-row label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+  margin-right: 6px;
+}
+
+.filter-row select,
+.filter-row input[type="text"],
+.filter-row input[type="date"] {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 180px;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+}
+
+.filter-row input:focus,
+.filter-row select:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* Dugme centrirano ispod filtera */
+.export-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.export-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.export-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* ======= PAGINACIJA ======= */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.page-size select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.page-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.page-btn:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 14px;
+  color: #374151;
+}
+

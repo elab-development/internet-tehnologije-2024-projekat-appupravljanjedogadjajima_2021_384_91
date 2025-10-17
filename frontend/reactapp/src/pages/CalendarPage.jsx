@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "./CalendarPage.css";
 
 export default function CalendarPage() {
-  const [modalDate, setModalDate] = useState(null); // 👈 datum za modal
+  const [modalDate, setModalDate] = useState(null); //  datum za modal
   const [events] = useState([
     { id: 1, title: "Ispit iz matematike", start: "2025-10-21T09:00:00", end: "2025-10-21T11:00:00" },
     { id: 2, title: "Prezentacija projekta", start: "2025-10-24T13:00:00", end: "2025-10-24T14:00:00" },
@@ -14,7 +14,7 @@ export default function CalendarPage() {
   ]);
 
   const handleDateClick = (info) => {
-    setModalDate(info.dateStr); // 👈 otvori modal sa kliknutim datumom
+    setModalDate(info.dateStr); //  otvori modal sa kliknutim datumom
   };
 
   const handleCloseModal = () => {
@@ -37,7 +37,7 @@ export default function CalendarPage() {
         dateClick={handleDateClick}
       />
 
-      {/* 👇 Modal prozor za dodavanje događaja */}
+      {/*  Modal prozor za dodavanje događaja */}
       {modalDate && (
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
