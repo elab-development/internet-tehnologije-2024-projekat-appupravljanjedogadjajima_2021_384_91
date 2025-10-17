@@ -1,18 +1,20 @@
-//precica rfce
-import React from 'react'
-import {FaShoppingCart} from "react-icons/fa";
+import { Link } from "react-router-dom";
+import "./NavBar.css";
 
-function NavBar({cartNum } ) {
-  //const cartNum = 0
+export default function NavBar() {
   return (
-    <div className = "navBar">
-      <a>My store</a>
-      <div className='cart-items'>
-        <FaShoppingCart/>
-        <p className='cart-num'>{cartNum}</p>
-      </div>
-    </div>
-  )
-}
+    <nav className="navbar">
+      <div className="navbar-left">
+        <h2 className="navbar-logo">Eventify</h2>
 
-export default NavBar
+        <Link to="/" className="navbar-link">Početna</Link>
+        <Link to="/calendar" className="navbar-link">Kalendar</Link>
+        <Link to="/admin" className="navbar-link">Admin</Link>
+      </div>
+
+      <div className="navbar-right">
+        <Link to="/login" className="navbar-button">Login</Link>
+      </div>
+    </nav>
+  );
+}
