@@ -1,60 +1,72 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 export default function Login() {
+  const navigate = useNavigate(); // React hook za navigaciju
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // simulacija logovanja
-    if (email === "admin@eventify.com" && password === "1234") {
-      setMessage("Uspešno ste se prijavili!");
+    // osnovna validacija
+    if (!email || !password) {
+      setError("Sva polja su obavezna!");
+      return;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      setError("Unesite ispravan e-mail!");
+      return;
+    }
+
+    // simulacija ispravnih kredencijala
+    if (email === "admin@eventify.com" && password === "12345") {
+      console.log("Uspešna prijava:", email);
+      setError("");
+
+      // Navigacija na kalendar (ili home)
+      navigate("/calendar");
     } else {
-      setMessage("Pogrešan email ili lozinka!");
+      setError("Pogrešan email ili lozinka!");
     }
   };
 
   return (
-    <div className="login-page">
+    <div className="login-container">
       <div className="login-card">
         <h2>Prijava na Eventify</h2>
+        <p className="subtitle">Unesite svoje podatke za pristup platformi</p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="login-form">
           <label>Email:</label>
           <input
             type="email"
+            placeholder="Unesite email..."
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Unesite email"
-            required
           />
 
           <label>Lozinka:</label>
           <input
             type="password"
+            placeholder="Unesite lozinku..."
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Unesite lozinku"
-            required
           />
+
+          {error && <p className="error-message">{error}</p>}
 
           <button type="submit" className="login-btn">
             Prijavi se
           </button>
         </form>
 
-        {message && (
-          <p
-            className={`login-message ${
-              message.includes("Uspešno") ? "success" : "error"
-            }`}
-          >
-            {message}
-          </p>
-        )}
+        <div className="login-footer">
+          <p>Zaboravili ste lozinku? <a href="#">Resetuj lozinku</a></p>
+        </div>
       </div>
     </div>
   );
