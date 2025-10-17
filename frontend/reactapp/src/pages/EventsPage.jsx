@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { createEvents } from "ics";
 import "./EventsPage.css";
 
 export default function EventsPage() {
@@ -38,36 +37,34 @@ export default function EventsPage() {
       ? events
       : events.filter((e) => e.category === parseInt(filter));
 
+  // 🔽 funkcija za izvoz događaja u iCal
   const exportToICS = () => {
     if (events.length === 0) {
       alert("Nema događaja za izvoz!");
       return;
     }
 
-    const icsEvents = events.map((e) => {
+    // generiši tekst fajla
+    let icsContent = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nPRODID:-//Eventify//React App//EN\r\n`;
+
+    events.forEach((e) => {
       const [year, month, day] = e.date.split("-").map(Number);
-      return {
-        title: e.title,
-        description: e.desc,
-        start: [year, month, day, 10, 0],
-        duration: { hours: 1 },
-      };
+      const startDate = `${year}${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}T100000Z`;
+      const endDate = `${year}${String(month).padStart(2, "0")}${String(day).padStart(2, "0")}T110000Z`;
+
+      icsContent += `BEGIN:VEVENT\r\nSUMMARY:${e.title}\r\nDESCRIPTION:${e.desc}\r\nDTSTART:${startDate}\r\nDTEND:${endDate}\r\nEND:VEVENT\r\n`;
     });
 
-    const { error, value } = createEvents(icsEvents);
+    icsContent += `END:VCALENDAR`;
 
-    if (error) {
-      console.error(error);
-      alert("Greška pri kreiranju .ics fajla!");
-      return;
-    }
-
-    const blob = new Blob([value], { type: "text/calendar;charset=utf-8" });
+    // napravi blob i pokreni preuzimanje
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = "dogadjaji.ics";
     link.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
