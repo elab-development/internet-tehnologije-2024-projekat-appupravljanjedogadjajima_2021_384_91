@@ -89,3 +89,23 @@
   border-radius: 6px;
   font-weight: 500;
 }
+
+.export-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.export-btn {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.export-btn:hover {
+  background-color: #059669;
+}

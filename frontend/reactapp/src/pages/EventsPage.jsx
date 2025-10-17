@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createEvents } from "ics";
 import "./EventsPage.css";
 
 export default function EventsPage() {
@@ -36,6 +37,38 @@ export default function EventsPage() {
     filter === "sve"
       ? events
       : events.filter((e) => e.category === parseInt(filter));
+
+  const exportToICS = () => {
+    if (events.length === 0) {
+      alert("Nema događaja za izvoz!");
+      return;
+    }
+
+    const icsEvents = events.map((e) => {
+      const [year, month, day] = e.date.split("-").map(Number);
+      return {
+        title: e.title,
+        description: e.desc,
+        start: [year, month, day, 10, 0],
+        duration: { hours: 1 },
+      };
+    });
+
+    const { error, value } = createEvents(icsEvents);
+
+    if (error) {
+      console.error(error);
+      alert("Greška pri kreiranju .ics fajla!");
+      return;
+    }
+
+    const blob = new Blob([value], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "dogadjaji.ics";
+    link.click();
+  };
 
   return (
     <div className="events-page">
@@ -87,6 +120,11 @@ export default function EventsPage() {
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Dugme za izvoz */}
+      <div className="export-section">
+        <button onClick={exportToICS} className="export-btn">📅 Izvezi događaje u iCal (.ics)</button>
       </div>
 
       {/* Lista događaja */}
