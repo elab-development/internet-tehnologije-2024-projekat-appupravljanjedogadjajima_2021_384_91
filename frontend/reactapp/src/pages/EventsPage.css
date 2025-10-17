@@ -109,3 +109,62 @@
 .export-btn:hover {
   background-color: #059669;
 }
+
+.clickable-event {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.clickable-event:hover {
+  transform: scale(1.02);
+  background-color: #f3f4f6;
+}
+
+/* --- MODAL STILOVI --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  padding: 30px;
+  width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content h3 {
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.close-btn:hover {
+  color: #dc2626;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

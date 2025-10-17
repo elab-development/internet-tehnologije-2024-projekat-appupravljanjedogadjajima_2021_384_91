@@ -15,6 +15,7 @@ export default function EventsPage() {
 
   const [filter, setFilter] = useState("sve");
   const [form, setForm] = useState({ title: "", desc: "", date: "", category: 1 });
+  const [selectedEvent, setSelectedEvent] = useState(null); // 👈 za modal
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,14 +38,13 @@ export default function EventsPage() {
       ? events
       : events.filter((e) => e.category === parseInt(filter));
 
-  // 🔽 funkcija za izvoz događaja u iCal
+  // 🔽 izvoz u iCal (kao ranije)
   const exportToICS = () => {
     if (events.length === 0) {
       alert("Nema događaja za izvoz!");
       return;
     }
 
-    // generiši tekst fajla
     let icsContent = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nPRODID:-//Eventify//React App//EN\r\n`;
 
     events.forEach((e) => {
@@ -57,7 +57,6 @@ export default function EventsPage() {
 
     icsContent += `END:VCALENDAR`;
 
-    // napravi blob i pokreni preuzimanje
     const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -121,7 +120,9 @@ export default function EventsPage() {
 
       {/* Dugme za izvoz */}
       <div className="export-section">
-        <button onClick={exportToICS} className="export-btn">📅 Izvezi događaje u iCal (.ics)</button>
+        <button onClick={exportToICS} className="export-btn">
+          📅 Izvezi događaje u iCal (.ics)
+        </button>
       </div>
 
       {/* Lista događaja */}
@@ -132,7 +133,12 @@ export default function EventsPage() {
           filteredEvents.map((e) => {
             const category = categories.find((c) => c.id === e.category);
             return (
-              <li key={e.id} style={{ borderLeft: `6px solid ${category.color}` }}>
+              <li
+                key={e.id}
+                style={{ borderLeft: `6px solid ${category.color}` }}
+                onClick={() => setSelectedEvent(e)} // 👈 otvori modal
+                className="clickable-event"
+              >
                 <div>
                   <h4>{e.title}</h4>
                   <p>{e.desc}</p>
@@ -144,6 +150,19 @@ export default function EventsPage() {
           })
         )}
       </ul>
+
+      {/* 👇 MODAL PROZOR */}
+      {selectedEvent && (
+        <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={() => setSelectedEvent(null)}>×</button>
+            <h3>{selectedEvent.title}</h3>
+            <p><strong>Opis:</strong> {selectedEvent.desc || "Nema opisa"}</p>
+            <p><strong>Datum:</strong> {selectedEvent.date}</p>
+            <p><strong>Kategorija:</strong> {categories.find(c => c.id === selectedEvent.category)?.name}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
