@@ -9,6 +9,7 @@ export default function NavBar() {
 
         <Link to="/" className="navbar-link">Početna</Link>
         <Link to="/calendar" className="navbar-link">Kalendar</Link>
+        <Link to="/events" className="navbar-link">Događaji</Link>
         <Link to="/admin" className="navbar-link">Admin</Link>
       </div>
 

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import CalendarPage from "./pages/CalendarPage";
 import AdminPage from "./pages/AdminPage";
+import EventsPage from "./pages/EventsPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/events" element={<EventsPage />} />
           </Routes>
         </div>
       </div>
