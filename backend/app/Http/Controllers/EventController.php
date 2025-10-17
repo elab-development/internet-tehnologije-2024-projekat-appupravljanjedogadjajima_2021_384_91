@@ -7,15 +7,39 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    // GET /api/events
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Event::with('users')->get());
+        $query = Event::with('users');
+
+    
+        if ($request->has('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->title . '%');
+        }
+
+    
+        $events = $query->paginate(5);
+
+        return response()->json([
+            'message' => 'Events retrieved successfully',
+            'meta' => [
+                'current_page' => $events->currentPage(),
+                'last_page' => $events->lastPage(),
+                'total' => $events->total()
+            ],
+            'events' => $events->items()
+        ]);
     }
 
     // POST /api/events
     public function store(Request $request)
     {
+        if (!($request->user()->isAdmin() || $request->user()->isOrganizer())) {
+            return response()->json(['message' => 'Access denied'], 403);
+        }
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -65,6 +89,9 @@ class EventController extends Controller
     // DELETE /api/events/{id}
     public function destroy($id)
     {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'Access denied'], 403);
+        }
         $event = Event::findOrFail($id);
         $event->delete();
 
@@ -86,27 +113,43 @@ class EventController extends Controller
            'status' => 'required|in:pending,approved,rejected'
         ]);
 
-    $event = Event::findOrFail($event_id);
+        $event = Event::findOrFail($event_id);
 
     // Provera da li korisnik postoji na događaju
-    if (!$event->users()->where('user_id', $request->user_id)->exists()) {
-        return response()->json(['message' => 'User is not part of this event'], 404);
-    }
+        if (!$event->users()->where('user_id', $request->user_id)->exists()) {
+            return response()->json(['message' => 'User is not part of this event'], 404);
+        }
 
     // Ažuriranje statusa u pivot tabeli
-    $event->users()->updateExistingPivot($request->user_id, [
-        'status' => $request->status
-    ]);
+        $event->users()->updateExistingPivot($request->user_id, [
+            'status' => $request->status
+        ]);
 
-    return response()->json(['message' => 'Status updated successfully']);
+        return response()->json(['message' => 'Status updated successfully']);
     }
+
     public function getUsers($id)
-{
+    {
     // Pronađi događaj i učitaj njegove korisnike
-    $event = Event::with('users')->findOrFail($id);
+        $event = Event::with('users')->findOrFail($id);
 
     // Vrati sve korisnike koji su učesnici tog događaja
-    return response()->json($event->users);
-}
+        return response()->json($event->users);
+    }
 
+    public function myEvents(Request $request)
+    {
+        $user = $request->user();
+
+    // Ako je admin, vidi sve
+        if ($user->isAdmin()) {
+            $events = Event::with('users')->get();
+        } else {
+        // inače vidi samo one gde učestvuje ili koje je sam kreirao
+            $events = $user->events()->with('users')->get()
+                ->merge($user->organizedEvents()->with('users')->get());
+        }
+
+        return response()->json($events);
+    }   
 }

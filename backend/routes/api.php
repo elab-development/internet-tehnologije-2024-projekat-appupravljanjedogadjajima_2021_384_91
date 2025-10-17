@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/events/{event_id}/users/update-status', [EventController::class, 'updateUserStatus']);
 
 });
+Route::get('/my-events', [EventController::class, 'myEvents']);
