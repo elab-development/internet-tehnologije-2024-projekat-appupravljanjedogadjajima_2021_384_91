@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import CalendarPage from "./pages/CalendarPage";
 import AdminPage from "./pages/AdminPage";
 import EventsPage from "./pages/EventsPage";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
@@ -12,15 +13,7 @@ function App() {
         <NavBar />
         <div style={{ padding: "24px" }}>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <h1>Dobrodošao na Eventify platformu</h1>
-                  <p>Ovde će kasnije biti prikaz kalendara i događaja.</p>
-                </>
-              }
-            />
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/admin" element={<AdminPage />} />

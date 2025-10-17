@@ -29,7 +29,7 @@ export default function HomePage() {
         <h1>Dobrodošao na <span className="blue">Eventify</span> platformu</h1>
         <p>
           Tvoj lični sistem za praćenje, planiranje i organizovanje događaja.
-          Pregledaj kalendar, dodaj sopstvene događaje i izvozi ih u iCal format.
+          Pregledaj kalendar, dodaj sopstvene događaje i izvezi ih u iCal format.
         </p>
 
         <div className="hero-buttons">
