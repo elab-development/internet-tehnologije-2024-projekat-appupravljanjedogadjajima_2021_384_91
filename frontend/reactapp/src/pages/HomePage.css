@@ -1,0 +1,105 @@
+.home-page {
+  padding: 20px 40px;
+}
+
+.hero {
+  text-align: center;
+  background-color: #eff6ff;
+  padding: 60px 20px;
+  border-radius: 16px;
+  margin-bottom: 40px;
+}
+
+.hero h1 {
+  font-size: 2.2rem;
+  color: #1e3a8a;
+  margin-bottom: 16px;
+}
+
+.hero .blue {
+  color: #2563eb;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 20px auto;
+  color: #374151;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.hero-btn {
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.hero-btn.primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.hero-btn.primary:hover {
+  background-color: #1d4ed8;
+}
+
+.hero-btn.secondary {
+  background-color: white;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+}
+
+.hero-btn.secondary:hover {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Sekcija sa primerima događaja */
+.examples {
+  text-align: center;
+}
+
+.examples h2 {
+  color: #2563eb;
+  margin-bottom: 20px;
+}
+
+.event-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.event-card {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  width: 280px;
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.event-card:hover {
+  transform: scale(1.02);
+}
+
+.event-card h3 {
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+
+.event-card small {
+  color: #6b7280;
+}
