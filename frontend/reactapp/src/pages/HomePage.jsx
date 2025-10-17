@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./HomePage.css";
 
 export default function HomePage() {
@@ -9,7 +9,7 @@ export default function HomePage() {
       title: "Prezentacija projekta",
       desc: "Studenti predstavljaju projekte iz predmeta Softversko inženjerstvo.",
       date: "2025-10-23",
-      location: "FON - učionica 309",
+      location: "FON - učionica 21",
     },
     {
       id: 2,
@@ -23,11 +23,16 @@ export default function HomePage() {
       title: "FON konferencija",
       desc: "Događaj na kome predavači iz industrije dele iskustva i savete studentima.",
       date: "2025-11-05",
-      location: "Kampus FON - velika sala",
+      location: "FON - konferencijska sala",
     },
   ];
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+
+  //  useEffect - prikazuje poruku kad se stranica učita - prikazuje poruku u console
+  useEffect(() => {
+    console.log(" Početna stranica učitana - dobrodošli na Eventify!");
+  }, []); // [] znači da se efekat pokreće samo jednom, pri učitavanju
 
   return (
     <div className="home-page">
@@ -60,7 +65,7 @@ export default function HomePage() {
             <div
               key={e.id}
               className="event-card clickable"
-              onClick={() => setSelectedEvent(e)} // 👈 klik otvara modal
+              onClick={() => setSelectedEvent(e)} // klik otvara modal
             >
               <h3>{e.title}</h3>
               <p>{e.desc}</p>
@@ -70,7 +75,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 👇 Modal za detalje događaja */}
+      {/*  Modal za detalje događaja */}
       {selectedEvent && (
         <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
           <div
