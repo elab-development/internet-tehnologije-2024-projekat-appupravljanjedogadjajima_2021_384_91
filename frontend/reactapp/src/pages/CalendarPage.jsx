@@ -6,7 +6,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "./CalendarPage.css";
 
 export default function CalendarPage() {
-  const [modalDate, setModalDate] = useState(null); //  datum za modal
+  const [modalDate, setModalDate] = useState(null); // za modal
+
+  // Primer događaja (ostaju isti, ali vreme se više neće videti u month pogledu)
   const [events] = useState([
     { id: 1, title: "Ispit iz matematike", start: "2025-10-21T09:00:00", end: "2025-10-21T11:00:00" },
     { id: 2, title: "Prezentacija projekta", start: "2025-10-24T13:00:00", end: "2025-10-24T14:00:00" },
@@ -14,12 +16,10 @@ export default function CalendarPage() {
   ]);
 
   const handleDateClick = (info) => {
-    setModalDate(info.dateStr); //  otvori modal sa kliknutim datumom
+    setModalDate(info.dateStr);
   };
 
-  const handleCloseModal = () => {
-    setModalDate(null);
-  };
+  const handleCloseModal = () => setModalDate(null);
 
   const handleConfirmAdd = () => {
     alert(`(Simulacija) Novi događaj biće dodat za datum ${modalDate}`);
@@ -29,15 +29,25 @@ export default function CalendarPage() {
   return (
     <div className="calendar-page">
       <h2>Kalendar događaja</h2>
+
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         height="auto"
         events={events}
+
+        /* SVI DOGAĐAJI ISTE BOJE */
+        eventColor="#2563eb"
+        eventTextColor="white"
+
+        /* UKLONI “9a/1p” – ne prikazuj vreme uz naslov u month pogledu */
+        displayEventTime={false}
+
+        /* i dalje možemo klik na datum za modal */
         dateClick={handleDateClick}
       />
 
-      {/*  Modal prozor za dodavanje događaja */}
+      {/* Modal za potvrdu dodavanja događaja */}
       {modalDate && (
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
