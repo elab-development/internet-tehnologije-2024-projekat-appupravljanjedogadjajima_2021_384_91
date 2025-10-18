@@ -35,28 +35,31 @@ class EventController extends Controller
     }
 
     // POST /api/events
-    public function store(Request $request)
-    {
-        if (!($request->user()->isAdmin() || $request->user()->isOrganizer())) {
-            return response()->json(['message' => 'Access denied'], 403);
-        }
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
-        ]);
-
-        $event = Event::create(array_merge($data, [
-            'user_id' => $request->user()->id,
-        ]));
-
-        return response()->json([
-            'message' => 'Event created successfully',
-            'event' => $event
-        ], 201);
+   public function store(Request $request)
+{
+    if (!($request->user()->isAdmin() || $request->user()->isOrganizer())) {
+        return response()->json(['message' => 'Access denied'], 403);
     }
+
+    $data = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'location' => 'nullable|string|max:255',
+        'start_time' => 'required|date',
+        'end_time' => 'required|date|after:start_time',
+        'category_id' => 'nullable|exists:categories,id'
+    ]);
+
+    $event = Event::create(array_merge($data, [
+        'user_id' => $request->user()->id,
+    ]));
+
+    return response()->json([
+        'message' => 'Event created successfully',
+        'event' => $event
+    ], 201);
+}
+
 
     // GET /api/events/{id}
     public function show($id)
@@ -92,6 +95,7 @@ class EventController extends Controller
         if (!$request->user()->isAdmin()) {
             return response()->json(['message' => 'Access denied'], 403);
         }
+        
         $event = Event::findOrFail($id);
         $event->delete();
 
