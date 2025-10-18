@@ -16,9 +16,10 @@ class EventFactory extends Factory
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
             'location' => $this->faker->city(),
-            'user_id' => User::factory(),
-            'start_time' => $this->faker->dateTimeBetween('+1 days', '+1 month'),
-            'end_time' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
+            'start_time' => $this->faker->dateTimeBetween('+1 week', '+2 weeks'),
+            'end_time' => $this->faker->dateTimeBetween('+3 weeks', '+4 weeks'),
+            'user_id' => \App\Models\User::factory(),    
+            'category_id' => \App\Models\Category::factory(),
         ];
     }
 }
