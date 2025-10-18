@@ -18,9 +18,9 @@ export default function EventsPage() {
     { id: 5, title: "Ispit iz Matematike", desc: "A1 sala", date: "2025-10-27", category: 1 },
     { id: 6, title: "Vežbe", desc: "Dodatne konsultacije", date: "2025-10-28", category: 2 },
     { id: 7, title: "Kolokvijum", desc: "Teorija", date: "2025-10-29", category: 1 },
-    { id: 8, title: "Demo dan", desc: "Prezentacije timova", date: "2025-11-01", category: 3 },
-    { id: 9, title: "Predavanje 12", desc: "SPA i routing", date: "2025-11-02", category: 2 },
-    { id: 10, title: "Ispit iz OS", desc: "Kernel & IPC", date: "2025-11-03", category: 1 },
+    { id: 8, title: "Open dan", desc: "Prezentacije timova", date: "2025-11-01", category: 3 },
+    { id: 9, title: "Predavanje iz Softvera", desc: "Java & C#", date: "2025-11-02", category: 2 },
+    { id: 10, title: "Ispit iz Internet tehnologija", desc: "Laravel & React", date: "2025-11-03", category: 1 },
   ]);
 
   // FORM + FILTERI
