@@ -1,7 +1,32 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import "./NavBar.css";
 
 export default function NavBar() {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  useEffect(() => {
+    // 🔹 Reaguje na promene tokena bilo gde u aplikaciji
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Čisti listener kad se komponenta ukloni
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-left">
@@ -14,7 +39,16 @@ export default function NavBar() {
       </div>
 
       <div className="navbar-right">
-        <Link to="/login" className="navbar-button">Login</Link>
+        {isLoggedIn ? (
+          <button onClick={handleLogout} className="navbar-button logout">
+            Logout
+          </button>
+
+        ) : (
+          <Link to="/login" className="navbar-button">
+            Login
+          </Link>
+        )}
       </div>
     </nav>
   );

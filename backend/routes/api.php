@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -22,6 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/events/{id}/users/{user_id}', [EventController::class, 'removeUser']);
     Route::get('/events/{id}/users', [EventController::class, 'getUsers']);
     Route::patch('/events/{event_id}/users/update-status', [EventController::class, 'updateUserStatus']);
+    
 
 });
 Route::get('/my-events', [EventController::class, 'myEvents']);
+Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
+Route::post('/reset-password', [NewPasswordController::class, 'store']);

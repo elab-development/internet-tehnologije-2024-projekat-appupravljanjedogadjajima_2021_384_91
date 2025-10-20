@@ -7,6 +7,8 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -14,26 +16,27 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     public function store(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        Auth::shouldUse('web');
 
-    if (!Auth::attempt($credentials)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
-    }
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    $user = Auth::user();
+        $user = User::where('email', $credentials['email'])->first();
 
-    // Kreiranje API tokena
-    $token = $user->createToken('api-token')->plainTextToken;
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
 
-    return response()->json([
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+        'token' => $token,
         'user' => $user,
-        'token' => $token
-    ]);
-}
+        ]);
+    }
     /**
      * Destroy an authenticated session.
      */

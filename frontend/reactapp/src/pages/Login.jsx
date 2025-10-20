@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+import { login } from "../api";
+import { useEffect } from "react";
+import { getEvents } from "../api";
+import { Link } from "react-router-dom";
+
 
 export default function Login() {
   const navigate = useNavigate(); // React hook za navigaciju
@@ -8,31 +13,40 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // osnovna validacija
-    if (!email || !password) {
-      setError("Sva polja su obavezna!");
-      return;
-    }
+  // osnovna validacija
+  if (!email || !password) {
+    setError("Sva polja su obavezna!");
+    return;
+  }
 
-    if (!email.includes("@") || !email.includes(".")) {
-      setError("Unesite ispravan e-mail!");
-      return;
-    }
+  if (!email.includes("@") || !email.includes(".")) {
+    setError("Unesite ispravan e-mail!");
+    return;
+  }
 
-    // simulacija ispravnih kredencijala
-    if (email === "admin@eventify.com" && password === "12345") {
-      console.log("Uspešna prijava:", email);
+  try {
+    const data = await login(email, password);
+    
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("storage"));
+      console.log("Uspešna prijava:", data);
+
       setError("");
-
-      // Navigacija na kalendar (ili home)
       navigate("/calendar");
     } else {
-      setError("Pogrešan email ili lozinka!");
+      setError("Login uspeo, ali token nije vraćen sa servera.");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setError("Pogrešan email ili lozinka!");
+  }
+};
+
 
   return (
     <div className="login-container">
@@ -65,7 +79,8 @@ export default function Login() {
         </form>
 
         <div className="login-footer">
-          <p>Zaboravili ste lozinku? <a href="#">Resetuj lozinku</a></p>
+          <p>Zaboravili ste lozinku?{" "} <Link to="/forgot-password" className="link"> Resetuj lozinku</Link></p>
+          <p>Nemate nalog?{" "}<Link to="/register" className="link">Registrujte se</Link></p>
         </div>
       </div>
     </div>

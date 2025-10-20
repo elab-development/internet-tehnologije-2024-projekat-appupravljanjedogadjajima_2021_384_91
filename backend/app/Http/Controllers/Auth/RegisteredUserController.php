@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends Controller
 {
@@ -20,16 +21,17 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
 {
-    $request->validate([
+    $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|confirmed|min:8',
+        'password' => ['required', 'confirmed', Password::min(8)->numbers()],
     ]);
 
     $user = \App\Models\User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'role' => 'user',
     ]);
 
     $token = $user->createToken('api-token')->plainTextToken;
@@ -37,7 +39,7 @@ class RegisteredUserController extends Controller
     return response()->json([
         'user' => $user,
         'token' => $token
-    ], 201); // 201 = created
+    ], 201); 
 }
 
 }
