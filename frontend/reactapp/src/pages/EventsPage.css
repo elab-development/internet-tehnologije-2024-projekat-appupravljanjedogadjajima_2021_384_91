@@ -119,7 +119,26 @@
   transform: scale(1.02);
   background-color: #f3f4f6;
 }
+.search-btn, .export-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.2s, transform 0.1s;
+}
 
+.search-btn:hover, .export-btn:hover {
+  background-color: #1e40af;
+  transform: scale(1.03);
+}
+
+.search-btn:active, .export-btn:active {
+  transform: scale(0.97);
+}
 /* --- MODAL STILOVI --- */
 .modal-overlay {
   position: fixed;
@@ -330,3 +349,93 @@
   color: #374151;
 }
 
+.edit-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: transform 0.2s;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.close-btn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  border: none;
+  background: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-form input,
+.edit-form select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+  background-color: #1e40af;
+}
+
+.delete-btn {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
+}

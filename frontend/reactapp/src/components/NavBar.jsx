@@ -39,6 +39,10 @@ export default function NavBar() {
         <Link to="/calendar" className="navbar-link">Kalendar</Link>
         <Link to="/events" className="navbar-link">Događaji</Link>
         {JSON.parse(localStorage.getItem("user"))?.role === "admin" && (<Link to="/admin" className="navbar-link">Admin</Link>)}
+        {localStorage.getItem("token") && (
+          <Link to="/profile" className="navbar-link">Profil</Link>
+          )}
+
       </div>
 
       <div className="navbar-right">

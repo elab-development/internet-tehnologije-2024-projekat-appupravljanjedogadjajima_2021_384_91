@@ -9,10 +9,11 @@ import Breadcrumbs from "./components/Breadcrumbs";
 import { useEffect } from "react";
 import { getEvents } from "./api";
 import Register from "./pages/Register";
-import ChangePassword from "./pages/ForgottenPassword";
+import ForgotPassword from "./pages/ForgottenPassword";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
-
+import ProfilePage from "./pages/ProfilePage";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   useEffect(() => {
@@ -32,7 +33,9 @@ function App() {
              <Route path="/admin" element={<PrivateRoute requiredRole="admin"><AdminPage /></PrivateRoute>}/>
             <Route path="/events" element={<PrivateRoute><EventsPage /></PrivateRoute>} />
             <Route path="/register" element={<PublicRoute><Register /></PublicRoute>}/>
-            <Route path="/forgot-password" element={<ChangePassword />}/>
+            <Route path="/forgot-password" element={<ForgotPassword />}/>
+            <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+            <Route path="/change-password" element={<ChangePassword />} />
           </Routes>
         </div>
       </div>

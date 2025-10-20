@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./HomePage.css";
 import useFetch from "../hooks/useFetch";
@@ -9,11 +9,16 @@ export default function HomePage() {
   );
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("✅ Početna stranica učitana - dobrodošli na Eventify!");
   }, []);
 
+  // 🔹 Funkcija: klik na univerzitet -> preusmeri na stranicu događaja
+  const handleUniversityClick = (uni) => {
+    navigate(`/events?location=${encodeURIComponent(uni.name)}`);
+  };
 
   return (
     <div className="home-page">
@@ -40,78 +45,50 @@ export default function HomePage() {
       </section>
 
       <section className="examples">
-        <h2>Predstojeći događaji (API podaci)</h2>
+        <h2>Univerziteti u Srbiji (eksterni API)</h2>
 
-      <button onClick={refetch} className="refresh-btn">
-            🔄 Osveži podatke
-      </button>
+        <button onClick={refetch} className="refresh-btn">
+          🔄 Osveži podatke
+        </button>
 
-        {loading && <p>⏳ Učitavanje događaja...</p>}
+        {loading && <p>⏳ Učitavanje univerziteta...</p>}
         {error && <p style={{ color: "red" }}>❌ {error}</p>}
 
         <div className="event-cards">
-  {Array.isArray(universities) && universities.length > 0 ? (
-    universities.slice(7536, 7544).map((uni, index) => ( //uzimamo samo 8
-    <div
-      key={index}
-      className="event-card clickable"
-      onClick={() => setSelectedEvent(uni)}
-    >
-      <h3>{uni.name}</h3>
-      <p>Država: {uni.country}</p>
-      {uni.web_pages && (
-        <small>
-          🌐{" "}
-          <a
-            href={uni.web_pages[0]}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {uni.web_pages[0]}
-          </a>
-        </small>
-      )}
-    </div>
-  ))
-) : !loading && !error ? (
-  <p>Nema dostupnih događaja za prikaz.</p>
-) : null}
-
-</div>
-
+          {Array.isArray(universities) && universities.length > 0 ? (
+            universities
+              .filter((u) => u.country === "Serbia")
+              .slice(0, 8) 
+              .map((uni, index) => (
+                <div
+                  key={index}
+                  className="event-card clickable"
+                  onClick={() => handleUniversityClick(uni)}
+                >
+                  <h3>{uni.name}</h3>
+                  <p>Država: {uni.country}</p>
+                  {uni.web_pages && (
+                    <small>
+                      🌐{" "}
+                      <a
+                        href={uni.web_pages[0]}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {uni.web_pages[0]}
+                      </a>
+                    </small>
+                  )}
+                </div>
+              ))
+          ) : !loading && !error ? (
+            <p>Nema univerziteta za prikaz.</p>
+          ) : null}
+        </div>
       </section>
 
-      {/* Modal sa detaljima */}
-      {selectedEvent && (
-        <div className="modal-overlay" onClick={() => setSelectedEvent(null)}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="close-btn"
-              onClick={() => setSelectedEvent(null)}
-            >
-              ×
-            </button>
-            <h3>{selectedEvent.name}</h3>
-            <p><strong>Država:</strong> {selectedEvent.country}</p>
-            {selectedEvent.web_pages && (
-              <p>
-                <strong>Web sajt:</strong>{" "}
-                <a
-                  href={selectedEvent.web_pages[0]}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {selectedEvent.web_pages[0]}
-                </a>
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 }

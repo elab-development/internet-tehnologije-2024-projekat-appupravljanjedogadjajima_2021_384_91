@@ -10,7 +10,7 @@ class EventController extends Controller
     public function index(Request $request)
 {
     $user = $request->user();
-
+    
     if ($user->role === 'admin' || $user->role === 'user') {
         $events = Event::with('category', 'users')->get();
     } elseif ($user->role === 'organizer') {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -6,25 +6,108 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "./CalendarPage.css";
 
 export default function CalendarPage() {
-  const [modalDate, setModalDate] = useState(null); // za modal
+  const [events, setEvents] = useState([]);
+  const [modalDate, setModalDate] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Primer događaja (ostaju isti, ali vreme se više neće videti u month pogledu)
-  const [events] = useState([
-    { id: 1, title: "Ispit iz matematike", start: "2025-10-21T09:00:00", end: "2025-10-21T11:00:00" },
-    { id: 2, title: "Prezentacija projekta", start: "2025-10-24T13:00:00", end: "2025-10-24T14:00:00" },
-    { id: 3, title: "FON događaj", start: "2025-10-28", allDay: true },
-  ]);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
 
+  // 🔹 Učitaj događaje iz baze
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/events", {
+          headers: {
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || "Greška pri učitavanju događaja.");
+
+        const formatted = data.events.map((e) => ({
+          id: e.id,
+          title: e.title,
+          start: e.start_time,
+          end: e.end_time,
+          backgroundColor:
+            e.category_id === 1 ? "#ef4444" :
+            e.category_id === 2 ? "#3b82f6" :
+            e.category_id === 3 ? "#22c55e" :
+            e.category_id === 4 ? "#ba22c5" :
+            "#50c522",
+          allDay: !e.start_time, 
+        }));
+
+        setEvents(formatted);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, [token]);
+
+  // 🔹 Klik na datum – samo admini i organizatori mogu dodavati
   const handleDateClick = (info) => {
-    setModalDate(info.dateStr);
+    if (user?.role === "admin" || user?.role === "organizer") {
+      setModalDate(info.dateStr);
+    } else {
+      alert("Samo admini i organizatori mogu dodavati događaje.");
+    }
   };
 
   const handleCloseModal = () => setModalDate(null);
 
-  const handleConfirmAdd = () => {
-    alert(`(Simulacija) Novi događaj biće dodat za datum ${modalDate}`);
-    setModalDate(null);
+  // 🔹 Potvrda dodavanja događaja
+  const handleConfirmAdd = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: "Novi događaj",
+          description: "Dodat iz kalendara",
+          location: "FON",
+          category_id: 1,
+          start_time: modalDate + " 10:00:00",
+          end_time: modalDate + " 11:00:00",
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Greška pri dodavanju događaja.");
+
+      // Dodaj odmah novi događaj na kalendar
+      setEvents((prev) => [
+        ...prev,
+        {
+          id: data.event.id,
+          title: data.event.title,
+          start: data.event.start_time,
+          end: data.event.end_time,
+          allDay: false,
+        },
+      ]);
+
+      alert("✅ Događaj dodat!");
+      setModalDate(null);
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
   };
+
+  if (loading) return <p style={{ textAlign: "center" }}>Učitavanje kalendara...</p>;
+  if (error) return <p style={{ color: "red", textAlign: "center" }}>{error}</p>;
 
   return (
     <div className="calendar-page">
@@ -36,16 +119,16 @@ export default function CalendarPage() {
         height="auto"
         events={events}
 
-        /* SVI DOGAĐAJI ISTE BOJE */
         eventColor="#2563eb"
         eventTextColor="white"
-
-        /* UKLONI “9a/1p” – ne prikazuj vreme uz naslov u month pogledu */
         displayEventTime={false}
-
-        /* i dalje možemo klik na datum za modal */
-        dateClick={handleDateClick}
-      />
+        eventDisplay="block"             
+        eventMaxStack={3}                
+        moreLinkClick="popover"          
+        aspectRatio={1.3}                
+        dayMaxEventRows={3}             
+        eventClassNames="calendar-event"
+        dateClick={handleDateClick}/>
 
       {/* Modal za potvrdu dodavanja događaja */}
       {modalDate && (

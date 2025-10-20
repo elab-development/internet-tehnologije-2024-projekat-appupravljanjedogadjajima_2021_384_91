@@ -122,3 +122,38 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.fc-daygrid-event {
+  border-radius: 8px !important;
+  padding: 2px 6px !important;
+  font-size: 0.8rem !important;
+  line-height: 1.1rem !important;
+  margin-bottom: 3px !important;
+}
+
+.fc-more-link {
+  color: #2563eb !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+  text-decoration: none !important;
+}
+
+.fc-popover {
+  border-radius: 10px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fc-popover .fc-popover-header {
+  background-color: #2563eb !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.calendar-event {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease-in-out;
+}
+
+.calendar-event:hover {
+  transform: scale(1.03);
+  cursor: pointer;
+}

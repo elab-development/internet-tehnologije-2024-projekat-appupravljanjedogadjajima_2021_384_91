@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->post('/events', [EventController::class, 'sto
 Route::get('/my-events', [EventController::class, 'myEvents']);
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
 Route::post('/reset-password', [NewPasswordController::class, 'store']);
+Route::post('/change-password', [App\Http\Controllers\UserController::class, 'changePassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);

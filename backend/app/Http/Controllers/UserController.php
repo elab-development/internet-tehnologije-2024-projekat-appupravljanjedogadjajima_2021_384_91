@@ -23,7 +23,9 @@ class UserController extends Controller
 
         $user->password = Hash::make($validated['password']);
         $user->save();
-
+        $user->update([
+            'password' => Hash::make($request->new_password),
+        ]);
         
 
         return response()->json(['message' => 'Lozinka je uspešno promenjena.']);
