@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\CategoryController;
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -28,6 +29,15 @@ Route::middleware('auth:sanctum')->group(function () {
     
 
 });
+Route::middleware('auth:sanctum')->get('/user/events', [EventController::class, 'getUserEvents']);
+Route::middleware('auth:sanctum')->post('/events', [EventController::class, 'store']);
 Route::get('/my-events', [EventController::class, 'myEvents']);
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
 Route::post('/reset-password', [NewPasswordController::class, 'store']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::post('/categories', [CategoryController::class, 'store']);
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+});
+

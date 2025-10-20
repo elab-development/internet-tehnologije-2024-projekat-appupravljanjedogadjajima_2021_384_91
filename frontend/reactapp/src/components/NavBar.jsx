@@ -26,6 +26,9 @@ export default function NavBar() {
     setIsLoggedIn(false);
     navigate("/login");
   };
+  const user = JSON.parse(localStorage.getItem("user"));
+  {(user?.role === "admin" || user?.role === "organizer") && (<Link to="/create-event" className="navbar-link">Kreiraj događaj</Link>)}
+  {user?.role === "admin" && (<Link to="/admin" className="navbar-link">Admin</Link>)}
 
   return (
     <nav className="navbar">
@@ -35,7 +38,7 @@ export default function NavBar() {
         <Link to="/" className="navbar-link">Početna</Link>
         <Link to="/calendar" className="navbar-link">Kalendar</Link>
         <Link to="/events" className="navbar-link">Događaji</Link>
-        <Link to="/admin" className="navbar-link">Admin</Link>
+        {JSON.parse(localStorage.getItem("user"))?.role === "admin" && (<Link to="/admin" className="navbar-link">Admin</Link>)}
       </div>
 
       <div className="navbar-right">

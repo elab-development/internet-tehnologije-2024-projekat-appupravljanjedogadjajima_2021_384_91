@@ -1,32 +1,109 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./AdminPage.css";
 
 export default function AdminPage() {
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Ispiti", color: "#ef4444" },
-    { id: 2, name: "Predavanja", color: "#3b82f6" },
-    { id: 3, name: "Projekti", color: "#22c55e" },
-  ]);
-
+  const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({ name: "", color: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e) => {
+  // 🔹 Učitaj kategorije iz baze
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://127.0.0.1:8000/api/categories", {
+          headers: {
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || "Greška pri učitavanju kategorija.");
+
+        setCategories(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // 🔹 Dodavanje nove kategorije
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.name.trim() === "") return;
 
-    const newCategory = {
-      id: Math.max(0, ...categories.map((c) => c.id)) + 1,
-      name: form.name,
-      color: form.color || "#6b7280",
-    };
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    setCategories([...categories, newCategory]);
-    setForm({ name: "", color: "" });
+    if (user?.role !== "admin") {
+      alert("Samo admini mogu dodavati kategorije.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: form.name,
+          color: form.color || "#6b7280",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || "Greška pri dodavanju kategorije.");
+
+      setCategories([...categories, data.category]);
+      setForm({ name: "", color: "" });
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
   };
 
-  const handleDelete = (id) => {
-    setCategories(categories.filter((c) => c.id !== id));
+  // 🔹 Brisanje kategorije
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Da li ste sigurni da želite da obrišete ovu kategoriju?");
+    if (!confirmDelete) return;
+
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user?.role !== "admin") {
+      alert("Samo admini mogu brisati kategorije.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/categories/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Greška pri brisanju kategorije.");
+
+      setCategories(categories.filter((c) => c.id !== id));
+    } catch (err) {
+      alert("❌ " + err.message);
+    }
   };
+
+  if (loading) return <p style={{ textAlign: "center" }}>Učitavanje kategorija...</p>;
+  if (error) return <p style={{ color: "red", textAlign: "center" }}>{error}</p>;
 
   return (
     <div className="admin-page">

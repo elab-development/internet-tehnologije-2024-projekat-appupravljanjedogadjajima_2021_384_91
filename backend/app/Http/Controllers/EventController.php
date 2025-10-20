@@ -8,57 +8,48 @@ use Illuminate\Http\Request;
 class EventController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Event::with('users');
+{
+    $user = $request->user();
 
-    
-        if ($request->has('location')) {
-            $query->where('location', 'like', '%' . $request->location . '%');
-        }
-
-        if ($request->has('title')) {
-            $query->where('title', 'like', '%' . $request->title . '%');
-        }
-
-    
-        $events = $query->paginate(5);
-
-        return response()->json([
-            'message' => 'Events retrieved successfully',
-            'meta' => [
-                'current_page' => $events->currentPage(),
-                'last_page' => $events->lastPage(),
-                'total' => $events->total()
-            ],
-            'events' => $events->items()
-        ]);
+    if ($user->role === 'admin' || $user->role === 'user') {
+        $events = Event::with('category', 'users')->get();
+    } elseif ($user->role === 'organizer') {
+        $events = Event::where('user_id', $user->id)
+                        ->with('category', 'users')
+                        ->get();
+    } else {
+        return response()->json(['message' => 'Nedozvoljen pristup'], 403);
     }
+
+    return response()->json(['events' => $events]);
+}
+
 
     // POST /api/events
    public function store(Request $request)
-{
-    if (!($request->user()->isAdmin() || $request->user()->isOrganizer())) {
-        return response()->json(['message' => 'Access denied'], 403);
+    {
+        $user = $request->user();
+
+        if (!in_array($user->role, ['admin', 'organizer'])) {
+            return response()->json(['message' => 'Nemate dozvolu za kreiranje događaja.'], 403);
+        }
+
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'location' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date|after:start_time',
+        ]);
+
+        $event = Event::create(array_merge($data, ['user_id' => $user->id,]))->load('category');
+
+        return response()->json([
+            'message' => 'Događaj uspešno kreiran!',
+            'event' => $event
+        ], 201);
     }
-
-    $data = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'location' => 'nullable|string|max:255',
-        'start_time' => 'required|date',
-        'end_time' => 'required|date|after:start_time',
-        'category_id' => 'nullable|exists:categories,id'
-    ]);
-
-    $event = Event::create(array_merge($data, [
-        'user_id' => $request->user()->id,
-    ]));
-
-    return response()->json([
-        'message' => 'Event created successfully',
-        'event' => $event
-    ], 201);
-}
 
 
     // GET /api/events/{id}
@@ -90,17 +81,23 @@ class EventController extends Controller
     }
 
     // DELETE /api/events/{id}
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        if (!$request->user()->isAdmin()) {
-            return response()->json(['message' => 'Access denied'], 403);
-        }
-        
-        $event = Event::findOrFail($id);
-        $event->delete();
+        $user = $request->user();
+        $event = Event::find($id);
 
-        return response()->json(['message' => 'Event deleted successfully']);
+        if (!$event) {
+            return response()->json(['message' => 'Događaj nije pronađen'], 404);
+        }
+
+        if ($user->role === 'admin' || ($user->role === 'organizer' && $event->user_id === $user->id)) {
+            $event->delete();
+            return response()->json(['message' => 'Događaj obrisan']);
+        }
+
+        return response()->json(['message' => 'Nemate dozvolu za brisanje ovog događaja'], 403);
     }
+
     public function addUser(Request $request, $id)
     {
         $event = Event::findOrFail($id);
