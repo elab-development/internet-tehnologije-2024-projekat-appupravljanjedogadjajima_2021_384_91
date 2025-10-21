@@ -116,12 +116,10 @@ class EventController extends Controller
 
         $event = Event::findOrFail($event_id);
 
-    // Provera da li korisnik postoji na događaju
         if (!$event->users()->where('user_id', $request->user_id)->exists()) {
             return response()->json(['message' => 'User is not part of this event'], 404);
         }
 
-    // Ažuriranje statusa u pivot tabeli
         $event->users()->updateExistingPivot($request->user_id, [
             'status' => $request->status
         ]);
@@ -131,10 +129,8 @@ class EventController extends Controller
 
     public function getUsers($id)
     {
-    // Pronađi događaj i učitaj njegove korisnike
         $event = Event::with('users')->findOrFail($id);
 
-    // Vrati sve korisnike koji su učesnici tog događaja
         return response()->json($event->users);
     }
 
@@ -142,11 +138,9 @@ class EventController extends Controller
     {
         $user = $request->user();
 
-    // Ako je admin, vidi sve
         if ($user->isAdmin()) {
             $events = Event::with('users')->get();
         } else {
-        // inače vidi samo one gde učestvuje ili koje je sam kreirao
             $events = $user->events()->with('users')->get()
                 ->merge($user->organizedEvents()->with('users')->get());
         }

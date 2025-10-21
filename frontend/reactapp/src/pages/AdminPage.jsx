@@ -7,7 +7,6 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Učitaj kategorije iz baze
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -33,7 +32,6 @@ export default function AdminPage() {
     fetchCategories();
   }, []);
 
-  // 🔹 Dodavanje nove kategorije
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.name.trim() === "") return;
@@ -71,7 +69,6 @@ export default function AdminPage() {
     }
   };
 
-  // 🔹 Brisanje kategorije
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Da li ste sigurni da želite da obrišete ovu kategoriju?");
     if (!confirmDelete) return;

@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 
 export default function Login() {
-  const navigate = useNavigate(); // React hook za navigaciju
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,7 +16,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // osnovna validacija
   if (!email || !password) {
     setError("Sva polja su obavezna!");
     return;

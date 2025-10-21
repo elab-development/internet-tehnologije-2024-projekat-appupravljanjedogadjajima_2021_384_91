@@ -15,7 +15,6 @@ export default function HomePage() {
     console.log("✅ Početna stranica učitana - dobrodošli na Eventify!");
   }, []);
 
-  // 🔹 Funkcija: klik na univerzitet -> preusmeri na stranicu događaja
   const handleUniversityClick = (uni) => {
     navigate(`/events?location=${encodeURIComponent(uni.name)}`);
   };

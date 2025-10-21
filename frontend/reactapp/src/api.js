@@ -1,6 +1,5 @@
 const API_BASE = "http://127.0.0.1:8000/api";
 
-// 🧰 Helper funkcija za slanje zahteva
 async function apiRequest(endpoint, method = "GET", body = null, needsAuth = false) {
   const headers = {
     "Accept": "application/json",

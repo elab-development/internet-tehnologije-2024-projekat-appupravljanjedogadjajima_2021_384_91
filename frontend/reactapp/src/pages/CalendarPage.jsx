@@ -14,7 +14,6 @@ export default function CalendarPage() {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
-  // 🔹 Učitaj događaje iz baze
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -53,7 +52,6 @@ export default function CalendarPage() {
     fetchEvents();
   }, [token]);
 
-  // 🔹 Klik na datum – samo admini i organizatori mogu dodavati
   const handleDateClick = (info) => {
     if (user?.role === "admin" || user?.role === "organizer") {
       setModalDate(info.dateStr);
@@ -64,7 +62,6 @@ export default function CalendarPage() {
 
   const handleCloseModal = () => setModalDate(null);
 
-  // 🔹 Potvrda dodavanja događaja
   const handleConfirmAdd = async () => {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/events", {
@@ -87,7 +84,6 @@ export default function CalendarPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Greška pri dodavanju događaja.");
 
-      // Dodaj odmah novi događaj na kalendar
       setEvents((prev) => [
         ...prev,
         {

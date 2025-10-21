@@ -16,7 +16,6 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        // samo admin može da kreira kategorije
         if ($user->role !== 'admin') {
             return response()->json(['message' => 'Nemate dozvolu da dodajete kategorije.'], 403);
         }
@@ -38,7 +37,6 @@ class CategoryController extends Controller
     {
         $user = $request->user();
 
-        // samo admin može da briše
         if ($user->role !== 'admin') {
             return response()->json(['message' => 'Nemate dozvolu da brišete kategorije.'], 403);
         }

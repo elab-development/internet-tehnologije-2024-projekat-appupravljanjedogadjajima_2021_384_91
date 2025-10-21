@@ -10,7 +10,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const [form, setForm] = useState({ title: "", desc: "", date: "", category: "" });
+  const [form, setForm] = useState({ title: "", desc: "", date: "", location: "", category: "" });
   const [categoryFilter, setCategoryFilter] = useState("sve");
   const [searchText, setSearchText] = useState("");
   const [dateFrom, setDateFrom] = useState("");
@@ -71,7 +71,6 @@ export default function EventsPage() {
       if (!eventsRes.ok) throw new Error(eventsData.message || "Greška pri učitavanju događaja.");
       if (!categoriesRes.ok) throw new Error(categoriesData.message || "Greška pri učitavanju kategorija.");
 
-      // formatiranje događaja
       const formattedEvents = (eventsData.events || []).map((e) => ({
         id: e.id,
         title: e.title,
@@ -98,7 +97,7 @@ export default function EventsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.title.trim() || !form.date || !form.category) {
+    if (!form.title.trim() || !form.date || !form.category || !form.location) {
       alert("Popunite sva obavezna polja!");
       return;
     }
@@ -119,7 +118,7 @@ export default function EventsPage() {
         body: JSON.stringify({
           title: form.title,
           description: form.desc,
-          location: "Nepoznata lokacija",
+          location: form.location,
           category_id: parseInt(form.category),
           start_time: form.date + " 10:00:00",
           end_time: form.date + " 11:00:00",
@@ -136,6 +135,7 @@ export default function EventsPage() {
         id: data.event.id,
         title: data.event.title,
         desc: data.event.description,
+        location:data.event.location,
         date: data.event.start_time.substring(0, 10),
         category: data.event.category_id,
       };
@@ -319,21 +319,30 @@ const handleUpdateEvent = async (e) => {
             onChange={(e) => setForm({ ...form, desc: e.target.value })}
           />
           <input
+            type="text"
+            placeholder="Lokacija događaja"
+            value={form.location}
+            onChange={(e) => setForm({ ...form, location: e.target.value })}
+            required
+          />
+          <input
             type="date"
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
             required
           />
           <select
-            value={editEvent?.category}
+            value={form.category}
             onChange={(e) =>
-              setEditEvent({ ...editEvent, category: parseInt(e.target.value) })
+              setForm({ ...form, category: parseInt(e.target.value) })
             }
+            required
           >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
+            <option value="">Izaberi kategoriju</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
             ))}
           </select>
 
@@ -487,7 +496,7 @@ const handleUpdateEvent = async (e) => {
           ))}
         </select>
 
-        <button type="submit" className="save-btn">💾 Sačuvaj izmene</button>
+        <button type="submit" className="save-btn">Sačuvaj izmene</button>
 
         {user?.role === "admin" && (
           <button
@@ -495,7 +504,7 @@ const handleUpdateEvent = async (e) => {
             className="delete-btn"
             onClick={handleDeleteEvent}
           >
-            🗑️ Obriši događaj
+            Obriši događaj
           </button>
         )}
       </form>
